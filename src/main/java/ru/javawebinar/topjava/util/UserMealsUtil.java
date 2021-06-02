@@ -51,8 +51,6 @@ public class UserMealsUtil {
             }
         }
 
-        filteredMealWithExcesses.sort(Comparator.comparing(UserMealWithExcess::getDateTime));
-
         return filteredMealWithExcesses;
     }
 
@@ -69,7 +67,6 @@ public class UserMealsUtil {
                         meal.getDescription(),
                         meal.getCalories(),
                         allCaloriesOfDay.get(meal.getDateTime().toLocalDate()) > caloriesPerDay))
-                .sorted(Comparator.comparing(UserMealWithExcess::getDateTime))
                 .collect(Collectors.toList());
     }
 }
