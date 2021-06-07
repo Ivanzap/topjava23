@@ -18,11 +18,11 @@
         </tr>
         </thead>
         <tbody>
-        <c:forEach items="${mealTo}" var="mealTo">
-            <tr style="color:${mealTo.excess ? 'red' : 'green'}">
-                <td><c:out value="${mealTo.formatDateTime}" /></td>
-                <td><c:out value="${mealTo.description}" /></td>
-                <td><c:out value="${mealTo.calories}" /></td>
+        <c:forEach items="${mealsTo}" var="mealsTo">
+            <tr style="color:${mealsTo.excess ? 'red' : 'green'}">
+                <td><c:out value="${mealsTo.dateTime.toLocalDate()} ${mealsTo.dateTime.toLocalTime()}" /></td>
+                <td><c:out value="${mealsTo.description}" /></td>
+                <td><c:out value="${mealsTo.calories}" /></td>
             </tr>
         </c:forEach>
         </tbody>
