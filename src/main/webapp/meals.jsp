@@ -15,6 +15,8 @@
             <th>Date</th>
             <th>Description</th>
             <th>Calories</th>
+            <th></th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -23,6 +25,8 @@
                 <td><c:out value="${mealsTo.dateTime.toLocalDate()} ${mealsTo.dateTime.toLocalTime()}" /></td>
                 <td><c:out value="${mealsTo.description}" /></td>
                 <td><c:out value="${mealsTo.calories}" /></td>
+                <td><a href="MealServlet?action=edit&id=<c:out value="${mealsTo.id}"/>">Update</a></td>
+                <td><a href="MealServlet?action=delete&id=<c:out value="${mealsTo.id}"/>">Delete</a></td>
             </tr>
         </c:forEach>
         </tbody>
