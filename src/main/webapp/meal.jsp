@@ -20,7 +20,7 @@
         <input type="text" name="calories" value="${meal.calories}"/>
         <br />
         <input type="submit" value="save"/>
-        <input type="submit" value="cancel"/>
+        <input type="button" value="cancel" onclick='location.href = "meals?action=meals"'/>
     </form>
 </body>
 </html>

@@ -7,26 +7,27 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MealDaoImpl implements MealDao {
-    private static int MEAL_ID;
+    private static AtomicInteger MEAL_ID = new AtomicInteger(0);
 
     List<Meal> meals;
 
     {
         meals = Collections.synchronizedList(new ArrayList<>());
-        meals.add(new Meal(++MEAL_ID, LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500));
-        meals.add(new Meal(++MEAL_ID, LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000));
-        meals.add(new Meal(++MEAL_ID, LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500));
-        meals.add(new Meal(++MEAL_ID, LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100));
-        meals.add(new Meal(++MEAL_ID, LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000));
-        meals.add(new Meal(++MEAL_ID, LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500));
-        meals.add(new Meal(++MEAL_ID, LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410));
+        meals.add(new Meal(MEAL_ID.incrementAndGet(), LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500));
+        meals.add(new Meal(MEAL_ID.incrementAndGet(), LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000));
+        meals.add(new Meal(MEAL_ID.incrementAndGet(), LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500));
+        meals.add(new Meal(MEAL_ID.incrementAndGet(), LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100));
+        meals.add(new Meal(MEAL_ID.incrementAndGet(), LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000));
+        meals.add(new Meal(MEAL_ID.incrementAndGet(), LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500));
+        meals.add(new Meal(MEAL_ID.incrementAndGet(), LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410));
     }
 
     @Override
     public void addMeal(Meal meal) {
-        meal.setId(++MEAL_ID);
+        meal.setId(MEAL_ID.incrementAndGet());
         meals.add(meal);
     }
 
