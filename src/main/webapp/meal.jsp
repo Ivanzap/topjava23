@@ -6,9 +6,9 @@
 <body>
     <h3><a href="index.html">Home</a></h3>
     <hr>
-    <h2>Edit Meal</h2>
+    <h2>${nameForm} Meal</h2>
     <hr>
-    <form method="POST" action='meals' name="formAddMeal">
+    <form method="post" action="meals" name="formAddMeal">
         <input type="hidden" name="id" value="${meal.id}"/>
         <table border=0 cellspacing="10">
             <tr>
@@ -21,12 +21,12 @@
             </tr>
             <tr>
                 <td>Calories:</td>
-                <td><input type="text" name="calories" value="${meal.calories}"/></td>
+                <td><input type="number" name="calories" value="${meal.calories}"/></td>
             </tr>
             <tr>
                 <td>
                     <input type="submit" value="save"/>
-                    <input type="button" value="cancel" onclick='location.href = "meals?action=meals"'/>
+                    <input type="button" value="cancel" onclick='location.href = "/topjava/meals"'/>
                 </td>
             </tr>
         </table>
