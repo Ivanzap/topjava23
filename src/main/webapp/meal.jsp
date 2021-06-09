@@ -9,6 +9,7 @@
     <h2>Edit Meal</h2>
     <hr>
     <form method="POST" action='meals' name="formAddMeal">
+        <input type="hidden" name="id" value="${meal.id}"/>
         Date Time:
         <input type="datetime-local" name="dateTime" value="${meal.dateTime}"/>
         <br />

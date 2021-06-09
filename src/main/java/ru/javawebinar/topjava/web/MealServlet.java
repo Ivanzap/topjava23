@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -24,8 +23,7 @@ public class MealServlet extends HttpServlet {
     private static String MEALS = "/meals.jsp";
     private static String INSERT_OR_EDIT = "/meal.jsp";
     private static final int CALORIES_PER_DAY = 2000;
-    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
+    private List<MealTo> mealsTo;
     private MealDao dao;
 
     @Override
@@ -37,7 +35,7 @@ public class MealServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.debug("redirect to meals");
         String forward="";
-        List<MealTo> mealsTo;
+
         String action = request.getParameter("action");
 
         if(action.equalsIgnoreCase("meals")) {
@@ -64,9 +62,21 @@ public class MealServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
         Meal meal = new Meal();
-        meal.setDateTime(LocalDateTime.parse(request.getParameter("dateTime"), formatter));
+        meal.setDateTime(LocalDateTime.parse(request.getParameter("dateTime")));
         meal.setDescription(request.getParameter("description"));
         meal.setCalories(Integer.parseInt(request.getParameter("calories")));
+        String id = request.getParameter("id");
+        if(id == null || id.isEmpty()) {
+            dao.addMeal(meal);
+        } else {
+            meal.setId(Integer.parseInt(id));
+            dao.updateMeal(meal);
+        }
+
+        mealsTo = filteredByStreams(dao.getAllMeals(), LocalTime.MIN, LocalTime.MAX, CALORIES_PER_DAY);
+        request.setAttribute("mealTo", mealsTo);
+        request.getRequestDispatcher(MEALS).forward(request, response);
     }
 }
