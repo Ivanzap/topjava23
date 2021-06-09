@@ -26,6 +26,7 @@ public class MealDaoImpl implements MealDao {
 
     @Override
     public void addMeal(Meal meal) {
+        meal.setId(++MEAL_ID);
         meals.add(meal);
     }
 

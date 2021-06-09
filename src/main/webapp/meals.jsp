@@ -11,6 +11,8 @@
     <hr>
     <h2>Meals</h2>
     <hr>
+    <p><a href="meals?action=insert">Add Meal</a></p>
+    <hr>
     <table border=1>
         <thead>
         <tr>
