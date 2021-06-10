@@ -4,25 +4,23 @@ import ru.javawebinar.topjava.model.Meal;
 
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MealDaoInMemory implements MealDao {
     private final AtomicInteger count = new AtomicInteger(0);
 
-    private final List<Meal> meals;
+    private final Map<Integer, Meal> mapMeals;
 
     {
-        meals = Collections.synchronizedList(new ArrayList<>());
-        meals.add(new Meal(count.incrementAndGet(), LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500));
-        meals.add(new Meal(count.incrementAndGet(), LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000));
-        meals.add(new Meal(count.incrementAndGet(), LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500));
-        meals.add(new Meal(count.incrementAndGet(), LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100));
-        meals.add(new Meal(count.incrementAndGet(), LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000));
-        meals.add(new Meal(count.incrementAndGet(), LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500));
-        meals.add(new Meal(count.incrementAndGet(), LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410));
+        mapMeals = Collections.synchronizedMap(new HashMap<>());
+        mapMeals.put(count.incrementAndGet(), new Meal(count.get(), LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500));
+        mapMeals.put(count.incrementAndGet(), new Meal(count.get(), LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000));
+        mapMeals.put(count.incrementAndGet(), new Meal(count.get(), LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500));
+        mapMeals.put(count.incrementAndGet(), new Meal(count.get(), LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100));
+        mapMeals.put(count.incrementAndGet(), new Meal(count.get(), LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000));
+        mapMeals.put(count.incrementAndGet(), new Meal(count.get(), LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500));
+        mapMeals.put(count.incrementAndGet(), new Meal(count.get(), LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410));
     }
 
     @Override
@@ -31,38 +29,28 @@ public class MealDaoInMemory implements MealDao {
                 meal.getDateTime(),
                 meal.getDescription(),
                 meal.getCalories());
-        meals.add(newMeal);
+        mapMeals.put(count.get(), newMeal);
         return newMeal;
     }
 
     @Override
     public void delete(int id) {
-        meals.remove(getById(id));
+        mapMeals.remove(id);
     }
 
     @Override
-    public synchronized Meal update(Meal meal) {
-        int id = meal.getId();
-        int index = meals.indexOf(getById(id));
-        meals.set(index, meal);
+    public Meal update(Meal meal) {
+        mapMeals.replace(meal.getId(), meal);
         return meal;
     }
 
     @Override
     public List<Meal> getAll() {
-        return getMeals();
+        return new ArrayList<>(mapMeals.values());
     }
 
     @Override
     public Meal getById(int id) {
-        for (Meal meal : meals) {
-            if(meal.getId() == id)
-                return meal;
-        }
-        return null;
-    }
-
-    public List<Meal> getMeals() {
-        return meals;
+        return mapMeals.get(id);
     }
 }
