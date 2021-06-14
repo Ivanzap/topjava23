@@ -21,14 +21,14 @@ import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
 @Controller
 public class MealRestController {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private MealService service;
 
     public Meal create(Meal meal) {
-        log.info("create {}", meal);
         checkNew(meal);
+        log.info("create {}", meal);
         return service.create(authUserId(), meal);
     }
 
@@ -48,15 +48,15 @@ public class MealRestController {
         return getTos(meals, authUserCaloriesPerDay());
     }
 
-    public List<MealTo> getAll(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
+    public List<MealTo> getFilteredList(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
         log.info("getAll with starDate: {}, endDate: {}, startTime: {}, endTime: {}", startDate, endDate, startTime, endTime);
-        List<Meal> meals = service.getAll(authUserId());
-        return getFilteredTos(meals, authUserCaloriesPerDay(), startDate, endDate, startTime, endTime);
+        List<Meal> meals = service.getFilteredList(authUserId(), startDate, endDate);
+        return getFilteredTos(meals, authUserCaloriesPerDay(), startTime, endTime);
     }
 
     public void update(Meal meal, int id) {
-        log.info("update {} with id {}", meal, id);
         assureIdConsistent(meal, id);
+        log.info("update {} with id {}", meal, id);
         service.update(authUserId(), meal);
     }
 }
