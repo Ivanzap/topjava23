@@ -41,7 +41,8 @@ public class MealServlet extends HttpServlet {
         if (form.equals("saveForm")) {
             String id = request.getParameter("id");
 
-            Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
+            Meal meal = new Meal(null,
+                    id.isEmpty() ? null : Integer.parseInt(id),
                     LocalDateTime.parse(request.getParameter("dateTime")),
                     request.getParameter("description"),
                     Integer.parseInt(request.getParameter("calories")));
