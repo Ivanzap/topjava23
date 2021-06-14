@@ -12,7 +12,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
@@ -25,30 +27,43 @@ public class MealServlet extends HttpServlet {
 
     private final MealRestController mealRestController = appCtx.getBean(MealRestController.class);
 
-//    private MealRepository repository;
-//
-//    @Override
-//    public void init() {
-//        repository = new InMemoryMealRepository();
-//    }
+    LocalDate startDate = LocalDate.MIN;
+    LocalDate endDate = LocalDate.now();
+    LocalTime startTime = LocalTime.MIN;
+    LocalTime endTime = LocalTime.MAX;
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-        String id = request.getParameter("id");
 
-        Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
-                LocalDateTime.parse(request.getParameter("dateTime")),
-                request.getParameter("description"),
-                Integer.parseInt(request.getParameter("calories")));
+        String form = request.getParameter("nameForm");
 
-        log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
-        if (meal.isNew()) {
-            mealRestController.create(meal);
-        } else {
-            mealRestController.update(meal, getId(request));
+        if (form.equals("saveForm")) {
+            String id = request.getParameter("id");
+
+            Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
+                    LocalDateTime.parse(request.getParameter("dateTime")),
+                    request.getParameter("description"),
+                    Integer.parseInt(request.getParameter("calories")));
+
+            log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
+            if (meal.isNew()) {
+                mealRestController.create(meal);
+            } else {
+                mealRestController.update(meal, getId(request));
+            }
+            response.sendRedirect("meals");
+        } else if (form.equals("filterForm")) {
+            String fromDate = request.getParameter("fromDate");
+            String toDate = request.getParameter("toDate");
+            String fromTime = request.getParameter("fromTime");
+            String toTime = request.getParameter("toTime");
+            this.startDate = fromDate == null || fromDate.equals("") ? LocalDate.MIN : LocalDate.parse(fromDate);
+            this.endDate = toDate == null || toDate.equals("") ? LocalDate.now() : LocalDate.parse(toDate);
+            this.startTime = fromTime == null || fromTime.equals("") ? LocalTime.MIN : LocalTime.parse(fromTime);
+            this.endTime = toTime == null || toTime.equals("") ? LocalTime.MAX : LocalTime.parse(toTime);
+            response.sendRedirect("meals");
         }
-        response.sendRedirect("meals");
     }
 
     @Override
@@ -73,7 +88,7 @@ public class MealServlet extends HttpServlet {
             case "all":
             default:
                 log.info("getAll");
-                request.setAttribute("meals", mealRestController.getAll());
+                request.setAttribute("meals", mealRestController.getAll(startDate, endDate, startTime, endTime));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }
