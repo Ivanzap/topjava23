@@ -24,11 +24,6 @@ public class SpringMain {
             MealRestController mealRestController = appCtx.getBean(MealRestController.class);
             mealRestController.create(new Meal(null, LocalDateTime.of(2021, Month.JUNE, 13, 12, 50), "обед", 1200, 1));
             mealRestController.create(new Meal(null, LocalDateTime.of(2021, Month.JUNE, 13, 17, 50), "ужин", 1000, 1));
-            System.out.println(mealRestController.getFilteredList(
-                    LocalDate.of(2021, 6, 13),
-                    LocalDate.of(2021, 6, 13),
-                    LocalTime.of(11, 0),
-                    LocalTime.of(18, 0)));
         }
     }
 }

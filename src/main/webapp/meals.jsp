@@ -22,8 +22,8 @@
     <hr/>
     <h2>Meals</h2>
     <hr/>
-    <form method="post" id="filters" action="meals">
-        <input type="hidden" name="nameForm" value="filterForm">
+    <form method="get" id="filters" action="meals" target="_self">
+        <input type="hidden" name="action" value="filter">
         <table border="0" cellpadding="8">
             <thead>
             <tr>
