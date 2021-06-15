@@ -3,10 +3,9 @@ package ru.javawebinar.topjava.repository.inmemory;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -18,17 +17,11 @@ import static ru.javawebinar.topjava.util.DateTimeUtil.isBetweenHalfOpen;
 
 @Repository
 public class InMemoryMealRepository implements MealRepository {
-    private final Map<Integer, Meal> repository = new ConcurrentHashMap<>();
+    private final Map<Integer, Map<Integer, Meal>> repository = new ConcurrentHashMap<>();
     private final AtomicInteger counter = new AtomicInteger(0);
 
     {
-        repository.put(counter.incrementAndGet(), new Meal(counter.get(), LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак user 1", 500, 1));
-        repository.put(counter.incrementAndGet(), new Meal(counter.get(), LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед user 1", 1000, 1));
-        repository.put(counter.incrementAndGet(), new Meal(counter.get(), LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин user 1", 600, 1));
-        repository.put(counter.incrementAndGet(), new Meal(counter.get(), LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение user 1", 100, 1));
-        repository.put(counter.incrementAndGet(), new Meal(counter.get(), LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак user 2", 1000, 2));
-        repository.put(counter.incrementAndGet(), new Meal(counter.get(), LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед user 2", 500, 2));
-        repository.put(counter.incrementAndGet(), new Meal(counter.get(), LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин user 2", 410, 2));
+        MealsUtil.meals.forEach(meal -> save(meal.getUserId(), meal));
     }
 
     @Override
@@ -36,11 +29,14 @@ public class InMemoryMealRepository implements MealRepository {
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
             meal.setUserId(userId);
-            repository.put(meal.getId(), meal);
+            if (!repository.containsKey(userId)) {
+                repository.put(userId, new ConcurrentHashMap<>());
+            }
+            repository.get(userId).put(counter.get(), meal);
             return meal;
-        } else if (repository.get(meal.getId()).getUserId() == userId) {
+        } else if (repository.get(userId).get(meal.getId()).getUserId() == userId) {
             meal.setUserId(userId);
-            return repository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
+            return repository.get(userId).computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
         } else {
             return null;
         }
@@ -48,15 +44,15 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public boolean delete(int userId, int id) {
-        if (repository.get(id).getUserId() == userId) {
-            return repository.remove(id) != null;
+        if (repository.get(userId).get(id).getUserId() == userId) {
+            return repository.get(userId).remove(id) != null;
         }
         return false;
     }
 
     @Override
     public Meal get(int userId, int id) {
-        Meal meal = repository.get(id);
+        Meal meal = repository.get(userId).get(id);
         if (meal.getUserId() == userId) {
             return meal;
         }
@@ -65,7 +61,7 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getAll(int userId) {
-        return repository.values().stream()
+        return repository.get(userId).values().stream()
                 .filter(meal -> meal.getUserId() == userId)
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
@@ -73,7 +69,7 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getFilteredList(int userId, LocalDate startDate, LocalDate endDate) {
-        return repository.values().stream()
+        return repository.get(userId).values().stream()
                 .filter(meal -> meal.getUserId() == userId && isBetweenHalfOpen(meal.getDateTime(), startDate, endDate))
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
