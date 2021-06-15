@@ -72,11 +72,12 @@ public class MealServlet extends HttpServlet {
                 request.setAttribute("meal", meal);
                 request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
                 break;
-            case "filter" :
+            case "filter":
                 String fromDate = request.getParameter("fromDate");
                 String toDate = request.getParameter("toDate");
                 String fromTime = request.getParameter("fromTime");
                 String toTime = request.getParameter("toTime");
+                setDateTime(request, fromDate, toDate, fromTime, toTime);
                 log.info("getFilteredList with {}, {}, {}, {}", fromDate, toDate, fromTime, toTime);
                 request.setAttribute("meals", mealRestController.getFilteredList(fromDate, toDate, fromTime, toTime));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
@@ -93,6 +94,21 @@ public class MealServlet extends HttpServlet {
     private int getId(HttpServletRequest request) {
         String paramId = Objects.requireNonNull(request.getParameter("id"));
         return Integer.parseInt(paramId);
+    }
+
+    private void setDateTime(HttpServletRequest request, String fromDate, String toDate, String fromTime, String toTime) {
+        if (!fromDate.isEmpty()) {
+            request.setAttribute("fromDate", LocalDate.parse(fromDate));
+        }
+        if (!toDate.isEmpty()) {
+            request.setAttribute("toDate", LocalDate.parse(toDate));
+        }
+        if (!fromTime.isEmpty()) {
+            request.setAttribute("fromTime", LocalTime.parse(fromTime));
+        }
+        if (!toTime.isEmpty()) {
+            request.setAttribute("toTime", LocalTime.parse(toTime));
+        }
     }
 
     @Override

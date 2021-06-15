@@ -34,10 +34,10 @@
             </tr>
             </thead>
             <tr>
-                <td align="center"><input type="date" name="fromDate"></td>
-                <td align="center"><input type="date" name="toDate"></td>
-                <td align="center"><input type="time" name="fromTime"></td>
-                <td align="center"><input type="time" name="toTime"></td>
+                <td align="center"><input type="date" name="fromDate" value="<%= request.getAttribute("fromDate") %>"></td>
+                <td align="center"><input type="date" name="toDate" value="<%= request.getAttribute("toDate") %>"></td>
+                <td align="center"><input type="time" name="fromTime" value="<%= request.getAttribute("fromTime") %>"></td>
+                <td align="center"><input type="time" name="toTime" value="<%= request.getAttribute("toTime") %>"></td>
             </tr>
             <tr>
                 <td border="0"></td>
