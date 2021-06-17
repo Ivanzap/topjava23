@@ -6,13 +6,10 @@ import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import static ru.javawebinar.topjava.util.DateTimeUtil.isBetweenHalfOpen;
 import static ru.javawebinar.topjava.util.MealsUtil.filteredByList;
@@ -34,16 +31,13 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public Meal save(int userId, Meal meal) {
+        Map<Integer, Meal> meals = repository.computeIfAbsent(userId, ConcurrentHashMap::new);
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
-            if (!repository.containsKey(userId)) {
-                repository.put(userId, new ConcurrentHashMap<>());
-            }
-            repository.get(userId).put(meal.getId(), meal);
+            meals.put(userId, meal);
             return meal;
-        } else {
-            return repository.get(userId).computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
         }
+        return meals.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
     }
 
     @Override
