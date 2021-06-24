@@ -26,7 +26,7 @@ import static ru.javawebinar.topjava.MealTestData.*;
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
-    private static final int ID_MEAL_ADMIN = 100009;
+    private static final int ID_MEAL_ADMIN = 100008;
     private static final Meal MEAL_USER_ID_100002 = mealsUser.get(0);
     private static final Meal MEAL_USER_ID_100003 = mealsUser.get(1);
     private static final Meal MEAL_USER_ID_100004 = mealsUser.get(2);
@@ -44,7 +44,7 @@ public class MealServiceTest {
     @Test
     public void get() {
         Meal meal = service.get(ID_MEAL_ADMIN+1, ADMIN_ID);
-        assertMatch(meal, MEAL_ADMIN_ID_100010);
+        assertMatch(meal, MEAL_ADMIN_ID_100009);
     }
 
     @Test
@@ -80,9 +80,9 @@ public class MealServiceTest {
     @Test
     public void update() {
         Meal updated = getUpdated();
-        service.update(updated, USER_ID);
+        service.update(updated, ADMIN_ID);
         assertMatch(service.get(ID_MEAL_ADMIN, ADMIN_ID), getUpdated());
-        assertThrows(NotFoundException.class, () -> service.get(ID_MEAL_ADMIN, USER_ID));
+        assertThrows(NotFoundException.class, () -> service.update(MEAL_ADMIN_ID_100008, USER_ID));
     }
 
     @Test
