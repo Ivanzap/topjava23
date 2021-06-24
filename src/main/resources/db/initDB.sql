@@ -26,14 +26,12 @@ CREATE TABLE user_roles
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
-CREATE SEQUENCE global_seq_meals START WITH 1;
-
 CREATE TABLE meals
 (
-    id              INTEGER PRIMARY KEY  DEFAULT nextval('global_seq_meals')         ,
-    user_meal_id    INTEGER REFERENCES   users(id),
-    date_time       TIMESTAMP             NOT NULL,
-    description     VARCHAR               NOT NULL,
-    calories        INTEGER               NOT NULL
+    id              INTEGER PRIMARY KEY DEFAULT nextval('global_seq'),
+    user_id         INTEGER REFERENCES          users(id),
+    date_time       TIMESTAMP                   NOT NULL,
+    description     VARCHAR                     NOT NULL,
+    calories        INTEGER                     NOT NULL
 );
-CREATE UNIQUE INDEX user_unique_date_time ON meals (user_meal_id, date_time);
+CREATE UNIQUE INDEX meals_unique_user_id_date_time_idx ON meals (user_id, date_time);

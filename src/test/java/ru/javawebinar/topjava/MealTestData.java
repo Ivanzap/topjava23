@@ -15,17 +15,17 @@ public class MealTestData {
     public static final int ADMIN_ID = START_SEQ + 1;
 
     public static final List<Meal> mealsUser = Arrays.asList(
-            new Meal(1, LocalDateTime.of(2021, Month.JUNE, 19, 9, 0), "Завтрак user", 500),
-            new Meal(2, LocalDateTime.of(2021, Month.JUNE, 19, 12, 30), "Обед user", 1100),
-            new Meal(3, LocalDateTime.of(2021, Month.JUNE, 19, 18, 30), "Ужин user", 700),
-            new Meal(4, LocalDateTime.of(2021, Month.JUNE, 20, 8, 30), "Завтрак user", 400),
-            new Meal(5, LocalDateTime.of(2021, Month.JUNE, 20, 13, 0), "Обед user", 1000),
-            new Meal(6, LocalDateTime.of(2021, Month.JUNE, 20, 18, 0), "Ужин user", 450)
+            new Meal(100002, LocalDateTime.of(2021, Month.JUNE, 19, 9, 0), "Завтрак user", 500),
+            new Meal(100003, LocalDateTime.of(2021, Month.JUNE, 19, 12, 30), "Обед user", 1100),
+            new Meal(100004, LocalDateTime.of(2021, Month.JUNE, 19, 18, 30), "Ужин user", 700),
+            new Meal(100005, LocalDateTime.of(2021, Month.JUNE, 20, 0, 0), "Еда в непонятное время user", 400),
+            new Meal(100006, LocalDateTime.of(2021, Month.JUNE, 20, 13, 0), "Обед user", 1000),
+            new Meal(100007, LocalDateTime.of(2021, Month.JUNE, 20, 18, 0), "Ужин user", 450)
     );
     public static final List<Meal> mealsAdmin = Arrays.asList(
-            new Meal(7, LocalDateTime.of(2021, Month.JUNE, 19, 7, 30), "Завтрак admin", 600),
-            new Meal(8, LocalDateTime.of(2021, Month.JUNE, 19, 12, 0), "Обед admin", 1200),
-            new Meal(9, LocalDateTime.of(2021, Month.JUNE, 19, 19, 0), "Ужин admin", 400)
+            new Meal(100008, LocalDateTime.of(2021, Month.JUNE, 19, 7, 30), "Завтрак admin", 600),
+            new Meal(100009, LocalDateTime.of(2021, Month.JUNE, 19, 12, 0), "Обед admin", 1200),
+            new Meal(100010, LocalDateTime.of(2021, Month.JUNE, 19, 19, 0), "Ужин admin", 400)
     );
 
     public static Meal getNew() {

@@ -13,11 +13,8 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -29,22 +26,41 @@ import static ru.javawebinar.topjava.MealTestData.*;
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
+    private static final int ID_MEAL_ADMIN = 100009;
+    private static final Meal MEAL_USER_ID_100002 = mealsUser.get(0);
+    private static final Meal MEAL_USER_ID_100003 = mealsUser.get(1);
+    private static final Meal MEAL_USER_ID_100004 = mealsUser.get(2);
+    private static final Meal MEAL_ADMIN_ID_100008 = mealsAdmin.get(0);
+    private static final Meal MEAL_ADMIN_ID_100009 = mealsAdmin.get(1);
+    private static final Meal MEAL_ADMIN_ID_100010 = mealsAdmin.get(2);
 
     static {
         SLF4JBridgeHandler.install();
     }
 
     @Autowired
-    MealService service;
+    private MealService service;
 
     @Test
     public void get() {
-        assertThrows(NotFoundException.class, () -> service.get(8, USER_ID));
+        Meal meal = service.get(ID_MEAL_ADMIN+1, ADMIN_ID);
+        assertMatch(meal, MEAL_ADMIN_ID_100010);
+    }
+
+    @Test
+    public void getNotFound() {
+        assertThrows(NotFoundException.class, () -> service.get(ID_MEAL_ADMIN, USER_ID));
+    }
+
+    @Test
+    public void deletedNotFound() {
+        assertThrows(NotFoundException.class, () -> service.delete(ID_MEAL_ADMIN, USER_ID));
     }
 
     @Test
     public void delete() {
-        assertThrows(NotFoundException.class, () -> service.delete(8, USER_ID));
+        service.delete(ID_MEAL_ADMIN, ADMIN_ID);
+        assertThrows(NotFoundException.class, () -> service.get(ID_MEAL_ADMIN, ADMIN_ID));
     }
 
     @Test
@@ -52,27 +68,21 @@ public class MealServiceTest {
         LocalDate startDate = LocalDate.of(2021, Month.JUNE, 18);
         LocalDate endDate = LocalDate.of(2021, Month.JUNE, 19);
         List<Meal> inclusive = service.getBetweenInclusive(startDate, endDate, USER_ID);
-        List<Meal> listMeal = mealsUser.stream()
-                .filter(meal -> meal.getDate().compareTo(startDate) >= 0
-                        && meal.getDate().compareTo(endDate) <= 0)
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
-                .collect(Collectors.toList());
-        assertMatch(inclusive, listMeal);
+        assertMatch(inclusive, MEAL_USER_ID_100004, MEAL_USER_ID_100003, MEAL_USER_ID_100002);
     }
 
     @Test
     public void getAll() {
         List<Meal> all = service.getAll(ADMIN_ID);
-        mealsAdmin.sort(Comparator.comparing(Meal::getDateTime).reversed());
-        assertMatch(all, mealsAdmin);
+        assertMatch(all, MEAL_ADMIN_ID_100010, MEAL_ADMIN_ID_100009, MEAL_ADMIN_ID_100008);
     }
 
     @Test
     public void update() {
         Meal updated = getUpdated();
         service.update(updated, USER_ID);
-        assertMatch(service.get(8, ADMIN_ID), getUpdated());
-        assertThrows(NotFoundException.class, () -> service.get(8, USER_ID));
+        assertMatch(service.get(ID_MEAL_ADMIN, ADMIN_ID), getUpdated());
+        assertThrows(NotFoundException.class, () -> service.get(ID_MEAL_ADMIN, USER_ID));
     }
 
     @Test
@@ -88,6 +98,6 @@ public class MealServiceTest {
     @Test
     public void duplicateDateTimeCreate() {
         assertThrows(DataAccessException.class, () ->
-                service.create(new Meal(LocalDateTime.of(2021, Month.JUNE, 20, 8, 30), "Прием пищи", 800), USER_ID));
+                service.create(new Meal(MEAL_USER_ID_100002.getDateTime(), "Прием пищи", 800), USER_ID));
     }
 }
