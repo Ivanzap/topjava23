@@ -12,6 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.TimingLoggerRules;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
@@ -45,7 +46,7 @@ public class MealServiceTest {
     @Test
     public void delete() {
         service.delete(MEAL1_ID, USER_ID);
-        assertThrows(NoResultException.class, () -> service.get(MEAL1_ID, USER_ID));
+        assertThrows(NotFoundException.class, () -> service.get(MEAL1_ID, USER_ID));
     }
 
     @Test
@@ -83,12 +84,12 @@ public class MealServiceTest {
 
     @Test
     public void getNotFound() {
-        assertThrows(NoResultException.class, () -> service.get(NOT_FOUND, USER_ID));
+        assertThrows(NotFoundException.class, () -> service.get(NOT_FOUND, USER_ID));
     }
 
     @Test
     public void getNotOwn() {
-        assertThrows(NoResultException.class, () -> service.get(MEAL1_ID, ADMIN_ID));
+        assertThrows(NotFoundException.class, () -> service.get(MEAL1_ID, ADMIN_ID));
     }
 
     @Test
