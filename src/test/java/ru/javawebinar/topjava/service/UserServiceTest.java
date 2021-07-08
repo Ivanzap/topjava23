@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.service;
 
 import org.junit.Before;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.dao.DataAccessException;
@@ -27,6 +28,7 @@ public abstract class UserServiceTest extends ServiceTest {
         cacheManager.getCache("users").clear();
     }
 
+    @Test
     public void create() {
         User created = service.create(getNew());
         int newId = created.id();
@@ -36,40 +38,48 @@ public abstract class UserServiceTest extends ServiceTest {
         MATCHER.assertMatch(service.get(newId), newUser);
     }
 
+    @Test
     public void duplicateMailCreate() {
         assertThrows(DataAccessException.class, () ->
                 service.create(new User(null, "Duplicate", "user@yandex.ru", "newPass", Role.USER)));
     }
 
+    @Test
     public void delete() {
         service.delete(USER_ID);
         assertThrows(NotFoundException.class, () -> service.get(USER_ID));
     }
 
+    @Test
     public void deletedNotFound() {
         assertThrows(NotFoundException.class, () -> service.delete(NOT_FOUND));
     }
 
+    @Test
     public void get() {
         User user = service.get(USER_ID);
         MATCHER.assertMatch(user, UserTestData.user);
     }
 
+    @Test
     public void getNotFound() {
         assertThrows(NotFoundException.class, () -> service.get(NOT_FOUND));
     }
 
+    @Test
     public void getByEmail() {
         User user = service.getByEmail("admin@gmail.com");
         MATCHER.assertMatch(user, admin);
     }
 
+    @Test
     public void update() {
         User updated = getUpdated();
         service.update(updated);
         MATCHER.assertMatch(service.get(USER_ID), getUpdated());
     }
 
+    @Test
     public void getAll() {
         List<User> all = service.getAll();
         MATCHER.assertMatch(all, admin, user);
