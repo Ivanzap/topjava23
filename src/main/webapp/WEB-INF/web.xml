@@ -19,6 +19,7 @@
         </param-value>
     </context-param>
 
+    <!-- Spring MVC -->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
