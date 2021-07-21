@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -15,8 +14,6 @@ import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 import ru.javawebinar.topjava.util.ValidationUtil;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
@@ -90,7 +87,7 @@ public class JdbcUserRepository implements UserRepository {
         return users;
     }
 
-    public User setRole(User user) {
+    private User setRole(User user) {
         if (user != null) {
             List<Role> roles = jdbcTemplate.queryForList("SELECT role FROM user_roles WHERE user_id=?", Role.class, user.getId());
             user.setRoles(roles);
@@ -98,11 +95,11 @@ public class JdbcUserRepository implements UserRepository {
         return user;
     }
 
-    public void deleteRole(User user) {
+    private void deleteRole(User user) {
         jdbcTemplate.update("DELETE FROM user_roles WHERE user_id=?", user.getId());
     }
 
-    public void addRole(User user) {
+    private void addRole(User user) {
         Set<Role> roles = user.getRoles();
         if (!roles.isEmpty()) {
             jdbcTemplate.batchUpdate("INSERT INTO user_roles (user_id, role) VALUES (?, ?)", roles, roles.size(),
@@ -114,7 +111,7 @@ public class JdbcUserRepository implements UserRepository {
 
     }
 
-    public void updateRole(User user) {
+    private void updateRole(User user) {
         deleteRole(user);
         addRole(user);
     }
